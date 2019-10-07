@@ -1,0 +1,54 @@
+<?page title="Purchase Order" contentType="text/html;charset=UTF-8"?>
+<zk>
+<window title="Purchase Order List" border="normal" 
+		apply="org.zkoss.bind.BindComposer" viewModel="@id('vm') @init('vmd.TPoVmd')">
+	<zk>
+		<grid>
+			<rows>
+				<row>
+					<hlayout width="100%">
+						<button label="Add" onClick="@command('tambah')"></button>
+						<button label="Edit" onClick="@command('edit')"></button>
+						<button label="Hapus" onClick="@command('hapus')"></button>
+					</hlayout>
+				</row>
+				<row>
+					<div style="float: right;">
+						<hlayout width="100%">
+							<textbox placeholder="Cari.." value="@bind(vm.pencarian)" 
+								onOK="@command('cari')">
+							</textbox>
+						</hlayout>
+					</div>
+				</row>
+			</rows>
+
+
+		</grid>
+	</zk>
+	<separator />
+	<hlayout>
+		<listbox id="listBox" checkmark="true" mold="paging" pageSize="5"
+			model="@load(vm.listPO)" selectedItem="@bind(vm.poDto)"
+			emptyMessage="No customers match your search">
+			<listhead>
+				<listheader width="32px" />
+				<listheader width="122px" label="PO No" align="center" sort="auto(poNo)" />
+				<listheader label="Supplier Name" align="center" sort="auto(supName)" />
+				<listheader label="PO Date" align="center" sort="auto(poDate)" />
+				<listheader label="Total" align="center" sort="auto(total)" />
+			</listhead>
+			<template name="model">
+				<listitem>
+					<listcell />
+					<listcell label="@load(each.poNo)"></listcell>
+					<listcell label="@load(each.supName)"></listcell>
+					<listcell label="@load(each.poDate)"></listcell>
+					<listcell label="@load(each.total)"></listcell>
+				</listitem>
+
+			</template>
+		</listbox>
+	</hlayout>
+</window>
+</zk>

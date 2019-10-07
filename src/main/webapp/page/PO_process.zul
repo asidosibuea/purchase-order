@@ -1,0 +1,233 @@
+<?page title="Purchase Order" contentType="text/html;charset=UTF-8"?>
+<zk>
+	<window title="Purchase Order" border="normal"
+		apply="org.zkoss.bind.BindComposer"
+		viewModel="@id('vm') @init('vmd.TPoProcessVmd')">
+
+		<hlayout width="100%">
+			<button label="Back" onClick="@command('kembali')"></button>
+			<button label="Save" onClick="@command('simpan')"></button>
+		</hlayout>
+
+		<separator />
+		<hlayout>
+			<grid>
+				<columns>
+					<column width="15%"></column>
+					<column width="30%"></column>
+					<column width="10%"></column>
+					<column width="15%"></column>
+					<column width="30%"></column>
+				</columns>
+				<rows>
+					<row>
+						<!-- PO. NO -->
+						<label value="PO No."></label>
+
+						<textbox width="150px"
+							constraint="no empty : harus diisi"
+							value="@bind(vm.poDto.poNo) @save(vm.poDto.poNo, before='save')">
+						</textbox>
+						<!-- close tag PO No.  -->
+
+						<label></label>
+						<label value="PO Date"></label>
+						<datebox lenient="false" compact="false"
+							buttonVisible="true" format="dd-MMM-yyyy HH:mm:ss"
+							displayedTimeZones="GMT+7" timeZone="GMT+7"
+							timeZonesReadonly="false" value="@bind(vm.poDto.poDate)" />
+
+					</row>
+					<row>
+						<label value="Supplier Name"></label>
+
+						<combobox id="comboboxSupplier"
+							constraint="no empty : harus diisi"
+							model="@load(vm.listSupplier)" selectedItem="@bind(vm.supplier)"
+							value="@bind(vm.supplier.supName)" autodrop="true">
+							<template name="model">
+								<comboitem label="@load(each.supName)"
+									value="@load(each.supId)" />
+							</template>
+						</combobox>
+
+						<label></label>
+						<label value="PO Exp.Date"></label>
+						<datebox lenient="false" compact="false"
+							buttonVisible="true" format="dd-MMM-yyyy HH:mm:ss"
+							displayedTimeZones="GMT+7" timeZone="GMT+7"
+							timeZonesReadonly="false" value="@bind(vm.poDto.poExpDate)"
+							onChange="@command('calculateAging')" />
+
+					</row>
+					<row>
+						<label value="Address"></label>
+						<textbox multiline="true" width="300px" rows="3"
+							value="@bind(vm.supplier.supAddress) @save(vm.supplier.supAddress, before='save')"
+							constraint="no empty : harus diisi" readonly="true">
+						</textbox>
+						<label></label>
+
+						<label value="Aging"></label>
+						<textbox readonly="true"
+							value="@bind(vm.aging)">
+						</textbox>
+
+					</row>
+					<row>
+						<label value="Province"></label>
+						<combobox id="comboboxProvince"
+							constraint="no empty : harus diisi"
+							model="@load(vm.listProvince)" selectedItem="@bind(vm.province)"
+							value="@bind(vm.province.provName) @save(vm.province.provName)"
+							onSelect="@command('selectProvince')" autodrop="true">
+							<template name="model">
+								<comboitem label="@load(each.provName)"
+									value="@load(each.provId)" />
+							</template>
+						</combobox>
+						<label></label>
+
+						<!-- Tag Shipment  -->
+						<label value="Shipment"></label>
+
+						<radiogroup id="poShipment"
+							selectedItem="@bind(vm.poDto.poShipment) 
+							@save(vm.poDto.poShipment, before='save')">
+							<radio label="Full" value="F" />
+							<radio label="Partial" value="P" />
+						</radiogroup>
+					</row>
+					<row>
+						<label value="City"></label>
+						<combobox id="comboboxCity"
+							constraint="no empty : harus diisi" model="@load(vm.listCities)"
+							selectedItem="@bind(vm.city)" value="@bind(vm.city.cityName)"
+							autodrop="true">
+							<template name="model">
+								<comboitem label="@load(each.cityName)"
+									value="@load(each.cityId)" />
+							</template>
+						</combobox>
+						<label></label>
+						<label value="Notes"></label>
+						<textbox
+							value="@bind(vm.poDto.poNotes) @save(vm.poDto.poNotes, before='save')"
+							constraint="no empty : harus diisi">
+						</textbox>
+
+					</row>
+				</rows>
+			</grid>
+		</hlayout>
+		<separator />
+		<hlayout width="100%">
+			<button label="Add Item" onClick="@command('addItem')"></button>
+			<button label="Delete Item" onClick="@command('deleteItem')">
+			</button>
+		</hlayout>
+		<separator />
+		<label value="Items : "></label>
+		<separator />
+
+		<hlayout>
+			<listbox id="listBox2" checkmark="true" mold="paging"
+				pageSize="5" model="@load(vm.listPoDetail)"
+				selectedItem="@bind(vm.detailDto)"
+				emptyMessage="No items match your search" style="white-space: nowrap;">
+				<listhead>
+					<listheader width="32px" />
+					<listheader label="Item Name" align="center"
+						sort="auto(itemName)" />
+					<listheader label="Price" align="center"
+						sort="auto(itemPrice)" />
+					<listheader label="Qty" align="center"
+						sort="auto(itemQty)" />
+					<listheader label="SubTotal" align="center"
+						sort="auto(subtotal)" />
+				</listhead>
+				<template name="model">
+					<listitem>
+						<listcell />
+						<listcell label="@load(each.itemName)"></listcell>
+						<listcell label="@load(each.itemPrice)"></listcell>
+						<listcell label="@load(each.itemQty)"></listcell>
+						<listcell label="@load(each.subtotal.toString())"></listcell>
+					</listitem>
+
+				</template>
+			</listbox>
+		</hlayout>
+		<div style="float:right;">
+		<hlayout>
+			<grid width = "30%">
+				<rows>
+					<row>
+						<label value="%Diskon"></label>
+						<textbox
+							value="@bind(vm.poDto.discount) @save(vm.poDto.discount, before='save')"
+							onChange="@command('calculateTotal')" constraint="no empty : harus diisi">
+						</textbox>
+					</row>
+					<row>
+						<label value="Total"></label>
+						<doublebox
+							value="@bind(vm.poDto.total) @save(vm.poDto.total, before='save')"
+							readonly="true" constraint="no empty : harus diisi">
+						</doublebox>
+					</row>
+				</rows>
+			</grid>
+		</hlayout>
+		</div>
+
+		<window title="Order Detail" border="normal" mode="modal"
+			visible="@bind(vm.popUp)">
+			<div>
+				<button label="Back" onClick="@command('backDetail')"></button>
+				<button label="Save" onClick="@command('saveDetail')"></button>
+			</div>
+			<separator></separator>
+			<vlayout>
+				<grid width="500px">
+					<rows>
+						<row>
+							<label value="Product Name"></label>
+							<combobox constraint="no empty: harus diisi"
+								model="@load(vm.listItems)" selectedItem="@save(vm.item)"
+								value="@load(vm.item.itemName)@save(vm.item.itemName,before='save')">
+								<template name="model">
+									<comboitem
+										label="@load(each.itemName)" value="@load(each.itemId)">
+									</comboitem>
+								</template>
+							</combobox>
+						</row>
+						<row>
+							<label value="Item Price"></label>
+							<textbox constraint="no empty: harus diisi"
+								value="@bind(vm.item.itemPrice)@save(vm.item.itemPrice,before='save')"
+								readonly="true">
+							</textbox>
+						</row>
+						<row>
+							<label value="Qty"></label>
+							<textbox constraint="no empty: harus diisi"
+								value="@bind(vm.detailDto.itemQty)@save(vm.detailDto.itemQty,before='save')"
+								onChange="@command('hitungSubtotal')">
+							</textbox>
+						</row>
+						<row>
+							<label value="Subtotal"></label>
+							<doublebox constraint="no empty: harus diisi"
+								value="@bind(vm.detailDto.subtotal)@save(vm.detailDto.subtotal,before='save')"
+								readonly="true">
+							</doublebox>
+						</row>
+					</rows>
+				</grid>
+			</vlayout>
+		</window>
+
+	</window>
+</zk>
