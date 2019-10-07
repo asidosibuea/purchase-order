@@ -1,7 +1,7 @@
 # purchase-order
 
-https://imgur.com/mJY9gz2
+https://i.imgur.com/Pe9nqE7.png
 
-https://imgur.com/iawq074
+https://i.imgur.com/iawq074.png
 
 https://imgur.com/Pe9nqE7
