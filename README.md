@@ -1,7 +1,7 @@
 # purchase-order
 
-https://i.imgur.com/Pe9nqE7.png
+![Screenshot1](po_index.png)
 
-https://i.imgur.com/iawq074.png
+![Screenshot2](po_process.png)
 
-https://imgur.com/Pe9nqE7
+![Screenshot2](po_process_detail.png)
